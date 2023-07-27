@@ -1,0 +1,129 @@
+So, I just read the assignment. Definitely a bit overwhelmed.
+But let's try to break down what is actually asked.
+
+PART 1:
+Based on your instructions, what is the number of the bot that is responsible
+for comparing value-61 microchips with value-17 microchips?
+
+PART 2:
+What do you get if you multiply together the values of one chip in each of
+outputs 0, 1, and 2?
+
+P1 seems simple enough, we want to know which bot compared 61 and 17.
+I don't know if there are multiples of the same chip number, so let's see what
+input values we do know.
+
+I grep | sort and I get the following result
+
+value 2 goes to bot 64
+value 3 goes to bot 150
+value 5 goes to bot 18
+value 7 goes to bot 161
+value 11 goes to bot 2
+value 13 goes to bot 134
+value 17 goes to bot 2
+value 19 goes to bot 187
+value 23 goes to bot 47
+value 29 goes to bot 38
+value 31 goes to bot 159
+value 37 goes to bot 122
+value 41 goes to bot 24
+value 43 goes to bot 195
+value 47 goes to bot 184
+value 53 goes to bot 102
+value 59 goes to bot 6
+value 61 goes to bot 119
+value 67 goes to bot 69
+value 71 goes to bot 89
+value 73 goes to bot 111
+
+
+I can already see that value 17 and 61 are taken from the input bin, so they
+might be a bit easier to follow.
+
+I also grep and sort for lines starting with bot.
+
+snippet:
+bot 100 gives low to bot 55 and high to bot 178
+bot 101 gives low to bot 157 and high to bot 200
+bot 102 gives low to bot 187 and high to bot 173
+bot 103 gives low to output 15 and high to bot 199
+bot 104 gives low to bot 188 and high to bot 4
+bot 105 gives low to bot 108 and high to bot 98
+
+I notice that each bot only has one instruction that the bot directly performs.
+Meaning, a bot only gives away its chips once.
+
+... Is this a metaphor for a sorting algo or is this a binary search tree?
+Am I supposed to sort the chips, or the bots?
+
+Let's also check lines containing "output"
+
+bot 51 gives low to output 6 and high to bot 174
+bot 114 gives low to output 5 and high to bot 43
+bot 151 gives low to output 16 and high to bot 68
+bot 177 gives low to output 8 and high to bot 157
+bot 68 gives low to output 7 and high to bot 87
+bot 163 gives low to output 12 and high to bot 114
+bot 86 gives low to output 10 and high to output 18
+bot 103 gives low to output 15 and high to bot 199
+bot 161 gives low to output 17 and high to bot 208
+bot 179 gives low to output 19 and high to bot 86
+bot 174 gives low to output 11 and high to bot 30
+bot 157 gives low to output 2 and high to bot 179
+bot 120 gives low to output 9 and high to bot 177
+bot 30 gives low to output 1 and high to bot 151
+bot 208 gives low to output 4 and high to bot 130
+bot 130 gives low to output 0 and high to bot 51
+bot 37 gives low to output 20 and high to bot 103
+bot 199 gives low to output 13 and high to bot 120
+bot 43 gives low to output 14 and high to bot 37
+bot 87 gives low to output 3 and high to bot 163
+
+Each output bin is mentioned only once! And there is one less line with output
+than there is lines that directly hand a bot a value. I see now that this is
+because output 18 is given high at some point while the other outputs are given low.
+Number of inputs equals the number of outputs.
+
+
+Let's look back at the simpler example from the instructions.
+
+value 5 goes to bot 2
+bot 2 gives low to bot 1 and high to bot 0
+value 3 goes to bot 1
+bot 1 gives low to output 1 and high to bot 0
+bot 0 gives low to output 2 and high to output 0
+value 2 goes to bot 2
+
+It says in the instructions that bot 2 starts out with 2 and 5. I think
+that with the fact that bots are mentioned twice for obtaining a chip, and once
+for giving away its chips this means that the order of the instructions in the
+file isn't the same as the order that they actually happened in.
+
+I think this requires some dependency sorting to do proper... I've never done a topographical sort.
+So, since the data is small enough, I'm just not going to sort!
+
+So, this is the point where I started writing code. You can read the code in
+simulate_bots.py. Before you do that, here's a few notes:
+
+- Since this wasn't a live code challenge there is of course no chance for
+  asking questions in real time. That is why I've documented my thought process
+  as I went along inside the code file with most of the considerations I made.
+  My hope is that it will help understand my development/thought process,
+  and to realize what I would do if given more time.
+
+- I decided to make the script print the complete output so the user can pull their
+  own conclusions and I don't have to do extra checks for to answer the questions
+  in the assignment.
+
+- The usage for the script is `python3 simulate_bots.py <filename>`, very simple.
+
+Now to answer the questions:
+
+PART 1: BOT 73 COMPARED 'chips': [61, 17],
+
+PART 2: 5 * 13 * 61 = 3965
+    Output bins
+{   0: [5],
+    1: [13],
+    2: [61],
